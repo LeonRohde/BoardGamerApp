@@ -62,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button messageActivityButton = findViewById(R.id.messageActivityButton);
+        messageActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigieren Sie zur messageActivity, wenn der Button geklickt wird
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Verknüpfe die TextViews mit den Layout-Elementen
         dateTextView = findViewById(R.id.dateTextView);

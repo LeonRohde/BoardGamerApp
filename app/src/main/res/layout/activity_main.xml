@@ -92,4 +92,14 @@
         android:insetRight="20dp"
         android:insetBottom="10dp"
         android:text="Feedback" />
+
+    <Button
+        android:id="@+id/messageActivityButton"
+        android:layout_width="346dp"
+        android:layout_height="wrap_content"
+        android:insetLeft="20dp"
+        android:insetTop="10dp"
+        android:insetRight="20dp"
+        android:insetBottom="10dp"
+        android:text="Message" />
 </LinearLayout>
