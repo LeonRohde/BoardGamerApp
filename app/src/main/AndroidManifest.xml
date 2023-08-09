@@ -12,7 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BoardGameApp"
         tools:targetApi="31">
-        <activity android:name=".GameVotingActivity"
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GameVotingActivity"
             android:exported="true" />
         <activity
             android:name=".HostActivityRotation"
@@ -31,15 +38,12 @@
         </activity>
         <activity
             android:name=".FeedbackActivity"
-            android:label="Feedback Activity"
-            android:exported="true">
-    </activity>
+            android:exported="true"
+            android:label="Feedback Activity" />
         <activity
             android:name=".MessageActivity"
-            android:label="Message Activity"
-            android:exported="true">
-        </activity>
-
+            android:exported="true"
+            android:label="Message Activity" />
     </application>
 
 </manifest>
