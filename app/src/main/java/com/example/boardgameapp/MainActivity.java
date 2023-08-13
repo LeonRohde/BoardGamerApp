@@ -8,11 +8,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 
 public class MainActivity extends AppCompatActivity {
-
-
-
+    private FirebaseAuth auth;
+    private FirebaseUser user;
     private TextView dateTextView;
     private TextView locationTextView;
 
@@ -21,8 +23,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
-       Button hostRotationButton = findViewById(R.id.hostRotationButton);
+        if (user == null){
+            Intent login = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(login);
+            finish();
+        }
+        Button hostRotationButton = findViewById(R.id.hostRotationButton);
         hostRotationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +81,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//      NUR FÜR TEST. WIRD SPÄTER WIEDER GELÖSCHT!!!
+        Button loginButton = findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigieren Sie zur loginActivity, wenn der Button geklickt wird
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
         // Verknüpfe die TextViews mit den Layout-Elementen
         dateTextView = findViewById(R.id.dateTextView);
         locationTextView = findViewById(R.id.locationTextView);
