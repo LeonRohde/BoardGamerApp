@@ -8,11 +8,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 
 public class MainActivity extends AppCompatActivity {
-
-
-
+    private FirebaseAuth auth;
+    private FirebaseUser user;
     private TextView dateTextView;
     private TextView locationTextView;
 
@@ -21,8 +23,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
-       Button hostRotationButton = findViewById(R.id.hostRotationButton);
+        if (user == null){
+            Intent login = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(login);
+            finish();
+        }
+        Button hostRotationButton = findViewById(R.id.hostRotationButton);
         hostRotationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
