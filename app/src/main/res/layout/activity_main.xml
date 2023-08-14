@@ -102,15 +102,14 @@
         android:insetRight="20dp"
         android:insetBottom="10dp"
         android:text="Message" />
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="346dp"
-        android:layout_height="wrap_content"
-        android:text="NUR ZU TESTZWECKEN" />
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/logoutButton"
         android:layout_width="346dp"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:insetLeft="20dp"
+        android:insetTop="10dp"
+        android:insetRight="20dp"
+        android:insetBottom="10dp"
+        android:text="Abmelden" />
 </LinearLayout>

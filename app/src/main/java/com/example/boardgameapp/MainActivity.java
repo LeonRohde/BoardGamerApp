@@ -1,13 +1,21 @@
 package com.example.boardgameapp;
 
+import static com.google.android.material.internal.ContextUtils.getActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -82,13 +90,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //      NUR FÜR TEST. WIRD SPÄTER WIEDER GELÖSCHT!!!
-        Button loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        Button logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Navigieren Sie zur loginActivity, wenn der Button geklickt wird
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+                AuthUI.getInstance()
+                        .signOut(MainActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(MainActivity.this, "Erfolgreich abgemeldet",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent LoginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(LoginIntent);
+                                finish();
+                            }
+                        });
             }
         });
         // Verknüpfe die TextViews mit den Layout-Elementen
