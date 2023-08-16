@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,6 +16,7 @@ public class GameVotingActivity extends AppCompatActivity {
     private GameVotingAdapter adapter;
     private ArrayList<String> suggestedGames;
     private HashMap<String, Integer> votingResults;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +25,7 @@ public class GameVotingActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         suggestedGames = new ArrayList<>();
         suggestedGames.add("Spiel 1");
         suggestedGames.add("Spiel 2");
@@ -36,15 +36,19 @@ public class GameVotingActivity extends AppCompatActivity {
             votingResults.put(game, 0);
         }
 
-        adapter = new GameVotingAdapter(suggestedGames, votingResults);
+        adapter = new GameVotingAdapter(suggestedGames, new GameVotingAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                selectedPosition = position;
+            }
+        });
+
         recyclerView.setAdapter(adapter);
 
         Button voteButton = findViewById(R.id.voteButton);
         voteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Speichere das Abstimmungsergebnis
-                int selectedPosition = adapter.getSelectedPosition();
                 if (selectedPosition != RecyclerView.NO_POSITION) {
                     String selectedGame = suggestedGames.get(selectedPosition);
                     int votes = votingResults.get(selectedGame);

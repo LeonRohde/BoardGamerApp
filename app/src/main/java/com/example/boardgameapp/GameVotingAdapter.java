@@ -3,26 +3,26 @@ package com.example.boardgameapp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class GameVotingAdapter extends RecyclerView.Adapter<GameVotingAdapter.ViewHolder> {
 
     private ArrayList<String> suggestedGames;
-    private HashMap<String, Integer> votingResults;
+    private OnItemClickListener clickListener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public GameVotingAdapter(ArrayList<String> suggestedGames, HashMap<String, Integer> votingResults) {
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public GameVotingAdapter(ArrayList<String> suggestedGames, OnItemClickListener clickListener) {
         this.suggestedGames = suggestedGames;
-        this.votingResults = votingResults;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -34,12 +34,8 @@ public class GameVotingAdapter extends RecyclerView.Adapter<GameVotingAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String game = suggestedGames.get(position);
-        holder.gameRadioButton.setText(game);
-        holder.voteRadioGroup.setOnCheckedChangeListener(null); // Avoid triggering unwanted event
-        holder.voteRadioGroup.clearCheck();
-        holder.voteRadioGroup.check(selectedPosition == position ? holder.gameRadioButton.getId() : -1);
-        holder.voteCount.setText("Stimmen: " + votingResults.get(game));
+        String gameName = suggestedGames.get(position);
+        holder.bind(gameName, position);
     }
 
     @Override
@@ -47,28 +43,34 @@ public class GameVotingAdapter extends RecyclerView.Adapter<GameVotingAdapter.Vi
         return suggestedGames.size();
     }
 
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private RadioButton gameRadioButton;
-        private RadioGroup voteRadioGroup;
-        private TextView voteCount;
+
+        private Button gameButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            gameRadioButton = itemView.findViewById(R.id.gameRadioButton);
-            voteRadioGroup = itemView.findViewById(R.id.voteRadioGroup);
-            voteCount = itemView.findViewById(R.id.voteCount);
+            gameButton = itemView.findViewById(R.id.gameButton);
 
-            voteRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            gameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    selectedPosition = getAdapterPosition();
-                    notifyDataSetChanged();
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        selectedPosition = position;
+                        notifyDataSetChanged();
+                        clickListener.onItemClick(position);
+                    }
                 }
             });
         }
+
+        public void bind(String gameName, int position) {
+            gameButton.setText(gameName);
+            gameButton.setSelected(selectedPosition == position);
+        }
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
     }
 }
