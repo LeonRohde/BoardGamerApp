@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "810648644167",
+    "project_id": "board-gamer-app-f586e",
+    "storage_bucket": "board-gamer-app-f586e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810648644167:android:9157c5582819fb65b19f62",
+        "android_client_info": {
+          "package_name": "com.example.boardgameapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810648644167-deqrhb8kod232fibjp13058v23fokj6m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn8CsDQ5GDeuvxP9v0jLA8mc52wsbq7BQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810648644167-deqrhb8kod232fibjp13058v23fokj6m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
