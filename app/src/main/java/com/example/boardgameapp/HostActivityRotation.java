@@ -1,48 +1,49 @@
 package com.example.boardgameapp;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
-
-
-
-
 public class HostActivityRotation extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private HostRotationAdapter adapter;
     private ArrayList<Player> playerList;
+    private HostDatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_rotation);
 
-        // Initialisieren der RecyclerView und des Adapters
+        databaseHelper = new HostDatabaseHelper(this); // Füge diese Zeile hinzu
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         playerList = new ArrayList<>();
         adapter = new HostRotationAdapter(playerList);
         recyclerView.setAdapter(adapter);
 
-        // Hier rufen wir die Methode auf, um die Daten der Spieler zu laden
         loadPlayerData();
     }
 
-    // Dummy-Methode, um die Spielerdaten zu laden
     private void loadPlayerData() {
-        // Hier würden Sie normalerweise die Spielerdaten aus der Datenbank oder einem Backend abrufen
-        // In diesem Beispiel verwenden wir statische Dummy-Daten
-        playerList.add(new Player("Spieler 1", true));
-        playerList.add(new Player("Spieler 2", false));
-        playerList.add(new Player("Spieler 3", false));
-        playerList.add(new Player("Spieler 4", false));
+        // Get the game data from the database
+        Cursor cursor = databaseHelper.getAllGames();
 
-        // Benachrichtige den Adapter über die Änderung der Daten
+        if (cursor.moveToFirst()) {
+            do {
+                String gameName = cursor.getString(cursor.getColumnIndex(HostDatabaseHelper.COLUMN_GAME_NAME));
+                // Add your logic to retrieve other game details like date and participants
+
+                playerList.add(new Player(gameName, false)); // Example: You can adjust this part based on your data structure
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
         adapter.notifyDataSetChanged();
     }
 }
-

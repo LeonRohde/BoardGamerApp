@@ -1,6 +1,5 @@
 package com.example.boardgameapp;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -60,7 +59,6 @@ public class GameVotingActivity extends AppCompatActivity {
     }
 
 
-    @SuppressLint("Range")
     private int getVotes(String game) {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         String[] projection = {VotingDatabaseHelper.COLUMN_VOTES};
