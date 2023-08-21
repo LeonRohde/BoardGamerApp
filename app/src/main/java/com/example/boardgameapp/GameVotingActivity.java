@@ -25,7 +25,7 @@ public class GameVotingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_voting);
 
-        databaseHelper = new VotingDatabaseHelper(this);
+        databaseHelper = new VotingDatabaseHelper(GameVotingActivity.this);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -33,7 +33,7 @@ public class GameVotingActivity extends AppCompatActivity {
         suggestedGames.add("Spiel 1");
         suggestedGames.add("Spiel 2");
         suggestedGames.add("Spiel 3");
-
+        Log.d("GameVotingActivity", "Start vom Voting");
         adapter = new GameVotingAdapter(suggestedGames, new GameVotingAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -44,7 +44,8 @@ public class GameVotingActivity extends AppCompatActivity {
     }
 
     private void updateVotes(String game) {
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        //SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        VotingDatabaseHelper db = new VotingDatabaseHelper(GameVotingActivity.this);
         ContentValues values = new ContentValues();
         values.put(VotingDatabaseHelper.COLUMN_GAME, game);
         values.put(VotingDatabaseHelper.COLUMN_VOTES, getVotes(game) + 1);
@@ -52,7 +53,7 @@ public class GameVotingActivity extends AppCompatActivity {
         // Log the game value
         Log.d("GameVotingActivity", "Updating votes for game: " + game);
 
-        db.insertWithOnConflict(VotingDatabaseHelper.TABLE_VOTES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.onVoting("Game1");
         db.close();
         adapter.notifyDataSetChanged();
         showToast("Du hast für " + game + " gestimmt.");
