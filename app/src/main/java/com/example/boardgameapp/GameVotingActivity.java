@@ -29,11 +29,10 @@ public class GameVotingActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        suggestedGames = new ArrayList<>();
-        suggestedGames.add("Spiel 1");
-        suggestedGames.add("Spiel 2");
-        suggestedGames.add("Spiel 3");
-        Log.d("GameVotingActivity", "Start vom Voting");
+
+        // Empfange die Liste der vorgeschlagenen Spiele aus dem Intent
+        suggestedGames = getIntent().getStringArrayListExtra("suggestedGames");
+
         adapter = new GameVotingAdapter(suggestedGames, new GameVotingAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -44,7 +43,6 @@ public class GameVotingActivity extends AppCompatActivity {
     }
 
     private void updateVotes(String game) {
-        //SQLiteDatabase db = databaseHelper.getWritableDatabase();
         VotingDatabaseHelper db = new VotingDatabaseHelper(GameVotingActivity.this);
         ContentValues values = new ContentValues();
         values.put(VotingDatabaseHelper.COLUMN_GAME, game);
@@ -53,20 +51,21 @@ public class GameVotingActivity extends AppCompatActivity {
         // Log the game value
         Log.d("GameVotingActivity", "Updating votes for game: " + game);
 
-        db.onVoting("Game1");
+        db.onVoting(game);
         db.close();
         adapter.notifyDataSetChanged();
         showToast("Du hast für " + game + " gestimmt.");
     }
 
-
     private int getVotes(String game) {
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        VotingDatabaseHelper db = new VotingDatabaseHelper(GameVotingActivity.this);
+        SQLiteDatabase readableDatabase = db.getReadableDatabase();
+
         String[] projection = {VotingDatabaseHelper.COLUMN_VOTES};
         String selection = VotingDatabaseHelper.COLUMN_GAME + " = ?";
         String[] selectionArgs = {game};
 
-        Cursor cursor = db.query(
+        Cursor cursor = readableDatabase.query(
                 VotingDatabaseHelper.TABLE_VOTES,
                 projection,
                 selection,
@@ -78,13 +77,19 @@ public class GameVotingActivity extends AppCompatActivity {
 
         int votes = 0;
         if (cursor.moveToFirst()) {
-            votes = cursor.getInt(cursor.getColumnIndex(VotingDatabaseHelper.COLUMN_VOTES));
+            int columnIndex = cursor.getColumnIndex(VotingDatabaseHelper.COLUMN_VOTES);
+            if (columnIndex >= 0) {
+                votes = cursor.getInt(columnIndex);
+            }
         }
 
         cursor.close();
         db.close();
         return votes;
     }
+
+
+
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
