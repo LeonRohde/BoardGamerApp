@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,7 @@ public class GameVotingActivity extends AppCompatActivity {
     private GameVotingAdapter adapter;
     private ArrayList<String> suggestedGames;
     private VotingDatabaseHelper databaseHelper;
+    private Button voteButton; // Button zum Speichern der Abstimmungsergebnisse
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,15 @@ public class GameVotingActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
+
+        voteButton = findViewById(R.id.voteButton); // Button initialisieren
+        voteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveVotesToDatabase(); // Bei Klick auf den Button Abstimmungsergebnisse speichern
+                showToast("Abstimmungsergebnisse wurden gespeichert.");
+            }
+        });
     }
 
     private void updateVotes(String game) {
@@ -88,8 +100,27 @@ public class GameVotingActivity extends AppCompatActivity {
         return votes;
     }
 
+    private void saveVotesToDatabase() {
+        VotingDatabaseHelper db = new VotingDatabaseHelper(GameVotingActivity.this);
+        SQLiteDatabase writableDatabase = db.getWritableDatabase();
+        String newTable = "CREATE TABLE IF NOT EXISTS voting_results (" +
+                VotingDatabaseHelper.COLUMN_GAME + " TEXT PRIMARY KEY, " +
+                VotingDatabaseHelper.COLUMN_VOTES + " INTEGER)";
+        writableDatabase.execSQL(newTable);
 
+        String copyVotes = "INSERT INTO voting_results (" +
+                VotingDatabaseHelper.COLUMN_GAME + ", " +
+                VotingDatabaseHelper.COLUMN_VOTES + ") SELECT " +
+                VotingDatabaseHelper.COLUMN_GAME + ", " +
+                VotingDatabaseHelper.COLUMN_VOTES + " FROM " +
+                VotingDatabaseHelper.TABLE_VOTES;
+        writableDatabase.execSQL(copyVotes);
 
+        String deleteVotes = "DELETE FROM " + VotingDatabaseHelper.TABLE_VOTES;
+        writableDatabase.execSQL(deleteVotes);
+
+        db.close();
+    }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

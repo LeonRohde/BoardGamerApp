@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 public class VotingDatabaseHelper extends SQLiteOpenHelper {
 
@@ -30,14 +29,6 @@ public class VotingDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE);
         ContentValues values = new ContentValues();
-        values.put(COLUMN_GAME, "Game1");
-        values.put(COLUMN_VOTES, 0);
-        long newGame =db.insert(TABLE_VOTES, null, values);
-        if (newGame == -1) {
-            Toast.makeText(context, "Game nicht angelegt", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Game wurde aufgenommen", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
