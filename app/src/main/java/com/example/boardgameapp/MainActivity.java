@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,11 +35,26 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        if (user == null){
+        /*if (user == null){
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);
             finish();
-        }
+        }*/
+        user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+            @Override
+            public void onComplete(@NonNull Task<GetTokenResult> task) {
+                if (task.isSuccessful()) {
+                    String idToken = task.getResult().getToken();
+                    Log.d("FirebaseToken", idToken);
+                } else {
+                    Intent login = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(login);
+                    finish();
+
+                }
+            }
+        });
+
         Button hostRotationButton = findViewById(R.id.hostRotationButton);
         hostRotationButton.setOnClickListener(new View.OnClickListener() {
             @Override
