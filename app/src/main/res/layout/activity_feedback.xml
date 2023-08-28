@@ -17,12 +17,19 @@
         android:layout_height="wrap_content"
         android:stepSize="0.5" />
 
-    <!-- Weitere TextViews und RatingBars hier... -->
-
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Absenden" />
+
+    <TextView
+        android:id="@+id/averageRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Durchschnittliche Bewertung: "
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -14,5 +14,7 @@ public interface FeedbackDao {
     @Query("SELECT * FROM feedback_table")
     List<Feedback> getAllFeedback();
 
+    @Query("SELECT AVG(hostRating) FROM feedback_table")
+    float getAverageHostRating();
 
 }
