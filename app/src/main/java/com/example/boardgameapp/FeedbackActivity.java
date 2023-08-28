@@ -3,13 +3,14 @@ package com.example.boardgameapp;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class FeedbackActivity extends AppCompatActivity {
 
     private RatingBar hostRatingBar;
-    private RatingBar foodRatingBar; // Stellen Sie sicher, dass die Deklaration vorhanden ist
+    private RatingBar foodRatingBar;
     private RatingBar overallRatingBar;
     private Button submitButton;
     private AppDatabase appDatabase;
@@ -26,11 +27,17 @@ public class FeedbackActivity extends AppCompatActivity {
 
         submitButton.setOnClickListener(v -> saveFeedback());
     }
-
     private void saveFeedback() {
+        float hostRating = hostRatingBar.getRating();
+
+        Feedback feedback = new Feedback();
+        feedback.setHostRating(hostRating);
+
+        AppExecutor.getInstance().diskIO().execute(() -> {
+            appDatabase.feedbackDao().insertFeedback(feedback);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Feedback gespeichert", Toast.LENGTH_SHORT).show();
+            });
+        });
     }
-
-
-    // Weitere Code hier ...
-
 }

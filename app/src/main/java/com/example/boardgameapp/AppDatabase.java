@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase;
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "app_database";
+
     private static AppDatabase instance;
 
     public abstract FeedbackDao feedbackDao();

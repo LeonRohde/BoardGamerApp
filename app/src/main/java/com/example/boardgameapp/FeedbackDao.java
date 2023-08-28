@@ -14,5 +14,5 @@ public interface FeedbackDao {
     @Query("SELECT * FROM feedback_table")
     List<Feedback> getAllFeedback();
 
-    // ... Weitere Methoden, z. B. zum Löschen von Feedback ...
+
 }
