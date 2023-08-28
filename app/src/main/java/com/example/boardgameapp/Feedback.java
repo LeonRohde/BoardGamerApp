@@ -45,7 +45,4 @@ public class Feedback {
         this.overallRating = overallRating;
     }
 
-    // Weitere Getter und Setter (optional) für andere Attribute hinzufügen
-
-    // ... Weitere Attribute und Methoden ...
 }

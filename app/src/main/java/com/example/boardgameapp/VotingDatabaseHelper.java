@@ -22,7 +22,7 @@ public class VotingDatabaseHelper extends SQLiteOpenHelper {
 
     public VotingDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context =context;
+        this.context = context;
     }
 
     @Override
@@ -37,7 +37,11 @@ public class VotingDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VOTES);
         onCreate(db);
     }
-
+ public void updateVotes(SQLiteDatabase db, String game, ContentValues values) {
+        String whereClause = COLUMN_GAME + " = ?";
+        String[] whereArgs = {game};
+        db.update(TABLE_VOTES, values, whereClause, whereArgs);
+    }
     public void onVoting(String Game){
         SQLiteDatabase db = this.getWritableDatabase();
         String voting =
