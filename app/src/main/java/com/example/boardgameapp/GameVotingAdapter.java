@@ -1,5 +1,6 @@
 package com.example.boardgameapp;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,7 @@ public class GameVotingAdapter extends RecyclerView.Adapter<GameVotingAdapter.Vi
             gameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("GameVotingActivity", "Geklickt");
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         selectedPosition = position;
@@ -65,6 +67,7 @@ public class GameVotingAdapter extends RecyclerView.Adapter<GameVotingAdapter.Vi
         }
 
         public void bind(String gameName, int position) {
+            Log.d("GameVotingActivity", "Bind");
             gameButton.setText(gameName);
             gameButton.setSelected(selectedPosition == position);
         }

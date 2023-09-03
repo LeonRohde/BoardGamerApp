@@ -32,8 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
-
-    ActivityResultLauncher<Intent> activityResultLauncher;
+    private final String TAG ="LoginActivity";
     private TextView ergebnisLogin;
     private FirebaseAuth mAuth;
 
@@ -49,8 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Navigieren Sie zur registerActivity, wenn der TextView geklickt wird
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-//                startActivity(intent);
-                activityResultLaunch.launch(intent);
+                startActivity(intent);
             }
         });
 
@@ -60,15 +58,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ergebnisLogin = findViewById(R.id.textViewLoginErg);
                 mAuth = FirebaseAuth.getInstance();
-
                 EditText eMailEdit = (EditText) findViewById(R.id.editTextLoginEmail);
                 EditText pwEdit = (EditText) findViewById(R.id.editTextLoginPassword);
                 String emailLogin = eMailEdit.getText().toString();
                 String pwLogin = pwEdit.getText().toString();
-                Log.d("Login", "Login leer");
+                Log.d(TAG, "Login leer");
                 if(TextUtils.isEmpty(emailLogin)
                 || TextUtils.isEmpty(pwLogin)){
-                    Log.d("Login", "Fehlermeldung müsste kommen");
                     ergebnisLogin.setText("Bitte geben Sie die E-Mail und Passwort ein");
                     return;
                 }
@@ -79,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Log.d("Login", "Erfolgreich");
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Toast.makeText(LoginActivity.this, "Erfolgreich angemeldet",
                                             Toast.LENGTH_SHORT).show();
@@ -91,24 +86,10 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.w("Login", "Nicht erfolgreich: ", task.getException());
                                     ergebnisLogin.setText("Login fehlerhaft: Entweder Passwort falsch " +
                                             "oder Sie sind nicht registriert");
-
                                 }
                             }
                         });
             }
         });
     }
-
-    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == 0) {
-                        Toast.makeText(LoginActivity.this, "Bitte melden Sie sich an", Toast.LENGTH_SHORT).show();
-                    } else  {
-                        Toast.makeText(LoginActivity.this, "Bitte registrieren Sie sich", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
 }
