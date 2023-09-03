@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation("com.google.firebase:firebase-auth")
 // Import Firebase Messaging
-    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-messaging:23.2.1'
 // Connection to MySQL via OKhttp
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
