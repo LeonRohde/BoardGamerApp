@@ -31,15 +31,22 @@ import com.google.android.gms.tasks.OnFailureListener;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 public class LoginActivity extends AppCompatActivity {
     private final String TAG ="LoginActivity";
     private TextView ergebnisLogin;
     private FirebaseAuth mAuth;
 
+    private OkHttpClient client;
+    private String url;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        client = new OkHttpClient();
 
         TextView register = findViewById(R.id.textRegister);
 
