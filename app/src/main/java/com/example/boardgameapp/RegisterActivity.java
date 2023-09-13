@@ -50,9 +50,6 @@ public class RegisterActivity extends AppCompatActivity {
         btnAbbruch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra("result", "Abbruch");
-                setResult(0, intent);
                 RegisterActivity.super.onBackPressed();
             }
         });
@@ -71,20 +68,21 @@ public class RegisterActivity extends AppCompatActivity {
                     ergebnis.setText(pruefung);
                 }
             }
+        });
+    }
+    private void pruefenEingabe() {
+        eMailEdit = (EditText) findViewById(R.id.editTextRegEmail);
+        passwortEdit = (EditText) findViewById(R.id.editTextRegPW);
+        passwortWiederEdit = (EditText) findViewById(R.id.editTextRegPWWieder);
+        vorNameEdit = (EditText) findViewById(R.id.editTextRegVorName);
+        nameEdit = (EditText) findViewById(R.id.editTextRegName);
+        strasseEdit = (EditText) findViewById(R.id.editTextRegStr);
+        hausNrEdit = (EditText) findViewById(R.id.editTextRegHausNr);
+        plzEdit = (EditText) findViewById(R.id.editTextRegPLZ);
+        ortEdit = (EditText) findViewById(R.id.editTextRegOrt);
+        ergebnis = (TextView) findViewById(R.id.textPruefung);
 
-            private void pruefenEingabe() {
-                eMailEdit = (EditText) findViewById(R.id.editTextRegEmail);
-                passwortEdit = (EditText) findViewById(R.id.editTextRegPW);
-                passwortWiederEdit = (EditText) findViewById(R.id.editTextRegPWWieder);
-                vorNameEdit = (EditText) findViewById(R.id.editTextRegVorName);
-                nameEdit = (EditText) findViewById(R.id.editTextRegName);
-                strasseEdit = (EditText) findViewById(R.id.editTextRegStr);
-                hausNrEdit = (EditText) findViewById(R.id.editTextRegHausNr);
-                plzEdit = (EditText) findViewById(R.id.editTextRegPLZ);
-                ortEdit = (EditText) findViewById(R.id.editTextRegOrt);
-                ergebnis = (TextView) findViewById(R.id.textPruefung);
-
-                if(TextUtils.isEmpty(eMailEdit.getText().toString())
+        if(TextUtils.isEmpty(eMailEdit.getText().toString())
                 || TextUtils.isEmpty(passwortEdit.getText().toString())
                 || TextUtils.isEmpty(passwortWiederEdit.getText().toString())
                 || TextUtils.isEmpty(vorNameEdit.getText().toString())
@@ -93,21 +91,19 @@ public class RegisterActivity extends AppCompatActivity {
                 || TextUtils.isEmpty(plzEdit.getText().toString())
                 || TextUtils.isEmpty(hausNrEdit.getText().toString())
                 || TextUtils.isEmpty(ortEdit.getText().toString())
-                ){
-                    pruefung = "Es müssen alle Felder gefüllt werden";
-                }else{
-                    String checkPW = passwortEdit.getText().toString();
-                    String checkWieder = passwortWiederEdit.getText().toString();
-                    if(checkPW.equals(checkWieder)){
-                        emailAuth = eMailEdit.getText().toString();
-                        pwAuth = passwortEdit.getText().toString();
-                        pruefung = "OK";
-                    }else{
-                        pruefung = "Die Passworte stimmen nicht überein";
-                    }
-                }
+        ){
+            pruefung = "Es müssen alle Felder gefüllt werden";
+        }else{
+            String checkPW = passwortEdit.getText().toString();
+            String checkWieder = passwortWiederEdit.getText().toString();
+            if(checkPW.equals(checkWieder)){
+                emailAuth = eMailEdit.getText().toString();
+                pwAuth = passwortEdit.getText().toString();
+                pruefung = "OK";
+            }else{
+                pruefung = "Die Passworte stimmen nicht überein";
             }
-        });
+        }
     }
 
     private void addFirebase() {
@@ -144,19 +140,9 @@ public class RegisterActivity extends AppCompatActivity {
         plz = plzEdit.getText().toString();
         ort = ortEdit.getText().toString();
 
-//      Neuen Spieler in Web-Datenbank einfügen
-        insertPlayerWebDB();
-        Log.d(TAG, "Prüfung vor Insert intern: " + pruefung);
-        if (pruefung.equals("OK")) {
-//          Neuen Spieler in SQLite auf lokalem Gerät einfügen
-            PlayerDatabaseHelper newPlayer = new PlayerDatabaseHelper(RegisterActivity.this);
-            newPlayer.addPlayer(email, vorname, name, strasse, hausnr, plz, ort);
-        }
-    }
-
-    private void insertPlayerWebDB() {
         OkHttpClient client = new OkHttpClient();
         String postPlayerUrl = "https://qu-iu-zz.beyer-its.de/ins_player.php";
+
         Log.d(TAG, "email " + email);
         RequestBody reqBody = new FormBody.Builder()
                 .add("email", email)
