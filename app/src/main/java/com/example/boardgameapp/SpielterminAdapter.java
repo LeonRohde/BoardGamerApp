@@ -17,6 +17,7 @@ public class SpielterminAdapter extends RecyclerView.Adapter<SpielterminAdapter.
     private List<Spieltermin> spieltermine;
 
     public SpielterminAdapter(List<Spieltermin> spieltermine) {
+
         this.spieltermine = spieltermine;
     }
 
@@ -40,6 +41,12 @@ public class SpielterminAdapter extends RecyclerView.Adapter<SpielterminAdapter.
     @Override
     public int getItemCount() {
         return spieltermine.size();
+    }
+
+    public void updateData(List<Spieltermin> newData) {
+        spieltermine.clear();
+        spieltermine.addAll(newData);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

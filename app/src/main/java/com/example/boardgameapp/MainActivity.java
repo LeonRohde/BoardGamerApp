@@ -1,5 +1,10 @@
 package com.example.boardgameapp;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,10 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +33,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
+    private RecyclerView recyclerView;
+    private SpielterminAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Initialisiere die RecyclerView und den Adapter
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new SpielterminAdapter(new ArrayList<Spieltermin>());
+        recyclerView.setAdapter(adapter);
+
+        // Die Buttons wurden korrigiert und die Funktionalität bleibt erhalten
         Button gameSuggestionsActivityButton = findViewById(R.id.gameSuggestionsActivityButton);
         gameSuggestionsActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
 
         return spieltermine;
     }
-
     private void getDataFromFTP() {
         String server = "ftp.beyer-its.de";
         int port = 21;
@@ -205,13 +215,11 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-                        SpielterminAdapter adapter = new SpielterminAdapter(spieltermine);
-                        recyclerView.setAdapter(adapter);
+                        // Aktualisiere den RecyclerView-Adapter mit den erhaltenen Daten
+                        adapter.updateData(spieltermine);
                     }
                 });
             }
         }).start();
     }
 }
-
