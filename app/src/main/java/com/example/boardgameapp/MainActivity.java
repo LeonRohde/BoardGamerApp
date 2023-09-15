@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,15 +28,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser user;
-    private TextView dateTextView;
-    private TextView locationTextView;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,16 +107,6 @@ public class MainActivity extends AppCompatActivity {
                         });
             }
         });
-
-        dateTextView = findViewById(R.id.dateTextView);
-        locationTextView = findViewById(R.id.locationTextView);
-
-        Spieltermin nextSpielTermin = getNextSpielTermin();
-
-        if (nextSpielTermin != null) {
-            dateTextView.setText("Datum: " + nextSpielTermin.getDate());
-            locationTextView.setText("Ort: " + nextSpielTermin.getLocation());
-        }
 
         // Hier rufen wir die Methode auf, um die RecyclerView zu aktualisieren
         updateRecyclerView();
@@ -211,21 +194,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Spieltermin getNextSpielTermin() {
-        // Dummy-Methode, um die Daten des nächsten Spieltermins zu erhalten
-        // Hier würdest du normalerweise die Daten aus der Datenbank oder einem Backend abrufen
-        // In diesem Beispiel geben wir statische Dummy-Daten zurück
-        return new Spieltermin("2023-08-15", "Beispielplatz 123");
-    }
-
     private void updateRecyclerView() {
-        // Hier rufst du die Daten aus der Webdatenbank ab
-        // Ersetze dies durch deinen tatsächlichen Code, um die Daten abzurufen
-        List<Spieltermin> spieltermine = getDatenAusWebdatenbank();
+        // Hier starten wir einen Hintergrundthread, um die Daten aus der Webdatenbank abzurufen
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Spieltermin> spieltermine = getDatenAusWebdatenbank();
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        SpielterminAdapter adapter = new SpielterminAdapter(spieltermine);
-        recyclerView.setAdapter(adapter);
+                // Die RecyclerView muss auf dem Hauptthread aktualisiert werden
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+                        SpielterminAdapter adapter = new SpielterminAdapter(spieltermine);
+                        recyclerView.setAdapter(adapter);
+                    }
+                });
+            }
+        }).start();
     }
-
 }
+
