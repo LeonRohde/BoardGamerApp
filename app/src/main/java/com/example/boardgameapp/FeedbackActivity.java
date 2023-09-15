@@ -24,6 +24,8 @@ public class FeedbackActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feedback);
 
         hostRatingBar = findViewById(R.id.hostRatingBar);
+        foodRatingBar = findViewById(R.id.foodRatingBar);
+        overallRatingBar = findViewById(R.id.overallRatingBar);
         submitButton = findViewById(R.id.submitButton);
 
         appDatabase = AppDatabase.getInstance(this);
@@ -32,9 +34,13 @@ public class FeedbackActivity extends AppCompatActivity {
     }
     private void saveFeedback() {
         float hostRating = hostRatingBar.getRating();
+        float foodRating = foodRatingBar.getRating();
+        float overallRating = overallRatingBar.getRating();
 
         Feedback feedback = new Feedback();
         feedback.setHostRating(hostRating);
+        feedback.setFoodRating(foodRating);
+        feedback.setOverallRating(overallRating);
 
         AppExecutor.getInstance().diskIO().execute(() -> {
             appDatabase.feedbackDao().insertFeedback(feedback);

@@ -8,7 +8,6 @@ public class Feedback {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
-
     private float hostRating;
     private float foodRating;
     private float overallRating;

@@ -16,7 +16,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:stepSize="0.5" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bewerte das Essen:" />
+    <RatingBar
+        android:id="@+id/foodRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stepSize="0.5" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bewerte den Spieleabend:" />
 
+    <RatingBar
+        android:id="@+id/overallRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stepSize="0.5" />
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
