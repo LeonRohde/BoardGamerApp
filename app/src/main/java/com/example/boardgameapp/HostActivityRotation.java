@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class HostActivityRotation extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private HostRotationAdapter adapter;
+    private SpielterminAdapter adapter;
     private ArrayList<Player> playerList;
     private HostDatabaseHelper databaseHelper;
 
@@ -24,7 +24,7 @@ public class HostActivityRotation extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         playerList = new ArrayList<>();
-        adapter = new HostRotationAdapter(playerList);
+        adapter = new SpielterminAdapter(playerList);
         recyclerView.setAdapter(adapter);
 
         loadPlayerData();
