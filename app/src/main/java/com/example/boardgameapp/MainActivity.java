@@ -1,10 +1,5 @@
 package com.example.boardgameapp;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +16,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,60 +127,43 @@ public class MainActivity extends AppCompatActivity {
         updateRecyclerView();
     }
 
+    private void updateRecyclerView() {
+        // Hier starten wir einen Hintergrundthread, um die Daten aus der Webdatenbank abzurufen
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Spieltermin> spieltermine = getDatenAusWebdatenbank();
+
+                // Die RecyclerView muss auf dem Hauptthread aktualisiert werden
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Aktualisiere den RecyclerView-Adapter mit den erhaltenen Daten
+                        adapter.updateData(spieltermine);
+
+                        // Fügen Sie Log-Nachrichten hinzu, um den Ablauf zu überprüfen
+                        Log.d("MainActivity", "RecyclerView aktualisiert. Anzahl der Spieltermine: " + spieltermine.size());
+                    }
+                });
+            }
+        }).start();
+    }
+
     private List<Spieltermin> getDatenAusWebdatenbank() {
         List<Spieltermin> spieltermine = new ArrayList<>();
-
-        try {
-            String serverURL = "https://qu-iu-zz.beyer-its.de/getGameData.php";
-            URL url = new URL(serverURL);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.connect();
-
-            int responseCode = httpURLConnection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-
-                bufferedReader.close();
-
-                String responseData = stringBuilder.toString();
-
-                // Hier kannst du den JSON-String parsen und die Spieltermine erstellen
-                // (ersetze es durch deinen eigenen Code)
-
-            } else {
-                // Fehlerbehandlung, wenn die Anfrage nicht erfolgreich war
-            }
-
-            httpURLConnection.disconnect();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return spieltermine;
-    }
-    private void getDataFromFTP() {
-        String server = "ftp.beyer-its.de";
-        int port = 21;
-        String username = "qu-iu-zz@beyer-its.de";
-        String password = "=5Ap-PVCKz=yy#S7";
-        String remoteFilePath = "getGameData.php";
 
         FTPClient ftpClient = new FTPClient();
 
         try {
-            ftpClient.connect(server, port);
-            int replyCode = ftpClient.getReplyCode();
+            String server = "ftp.beyer-its.de";
+            int port = 21;
+            String username = "qu-iu-zz@beyer-its.de";
+            String password = "=5Ap-PVCKz=yy#S7";
+            String remoteFilePath = "getGameData.php";
 
-            if (FTPReply.isPositiveCompletion(replyCode)) {
+            ftpClient.connect(server, port);
+
+            if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
                 boolean loginSuccess = ftpClient.login(username, password);
 
                 if (loginSuccess) {
@@ -202,24 +189,33 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return spieltermine;
     }
 
-    private void updateRecyclerView() {
-        // Hier starten wir einen Hintergrundthread, um die Daten aus der Webdatenbank abzurufen
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<Spieltermin> spieltermine = getDatenAusWebdatenbank();
 
-                // Die RecyclerView muss auf dem Hauptthread aktualisiert werden
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Aktualisiere den RecyclerView-Adapter mit den erhaltenen Daten
-                        adapter.updateData(spieltermine);
-                    }
-                });
+    private List<Spieltermin> parseJSON(String jsonData) {
+        List<Spieltermin> spieltermine = new ArrayList<>();
+
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int id = jsonObject.getInt("ID");
+                String email = jsonObject.getString("Email");
+                // Füge hier weitere Felder hinzu, die du aus dem JSON-Objekt auslesen möchtest
+                // Beispiel: String vorname = jsonObject.getString("Vorname");
+
+                // Erstelle ein Spieltermin-Objekt und füge es zur List hinzu
+                Spieltermin spieltermin = new Spieltermin(id, email);
+                spieltermine.add(spieltermin);
             }
-        }).start();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return spieltermine;
     }
 }

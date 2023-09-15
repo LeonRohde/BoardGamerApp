@@ -1,5 +1,6 @@
 package com.example.boardgameapp;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 public class SpielterminAdapter extends RecyclerView.Adapter<SpielterminAdapter.ViewHolder> {
 
     private List<Spieltermin> spieltermine;
+
+
 
     public SpielterminAdapter(List<Spieltermin> spieltermine) {
 
@@ -47,6 +50,12 @@ public class SpielterminAdapter extends RecyclerView.Adapter<SpielterminAdapter.
         spieltermine.clear();
         spieltermine.addAll(newData);
         notifyDataSetChanged();
+
+        // Fügen Sie Log-Meldungen hinzu, um den Status der Daten zu überprüfen
+        Log.d("SpielterminAdapter", "Anzahl der aktualisierten Daten: " + newData.size());
+        for (Spieltermin termin : newData) {
+            Log.d("SpielterminAdapter", "Spieltermin: " + termin.getName()); // Hier Name durch das entsprechende Attribut ersetzen
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

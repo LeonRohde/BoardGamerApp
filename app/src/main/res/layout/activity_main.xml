@@ -25,6 +25,7 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -33,7 +34,6 @@
         android:padding="10dp"
         android:scrollbars="vertical"
         tools:listitem="@layout/item_spieltermin" />
-
 
     <Button
         android:id="@+id/gameSuggestionsActivityButton"
