@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static String TAG = "MainActivity";
     private FirebaseAuth auth;
     private FirebaseUser user;
     private RecyclerView recyclerView;
@@ -122,7 +125,20 @@ public class MainActivity extends AppCompatActivity {
         // Hier rufen wir die Methode auf, um die RecyclerView zu aktualisieren
         updateRecyclerView();
     }
-
+    private void subscribeTopics() {
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic("BoardGamer")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed";
+                        if (!task.isSuccessful()) {
+                            msg = "Subscribe failed";
+                        }
+                        Log.d(TAG, msg);
+                    }
+                });
+    }
     private List<Spieltermin> getDatenAusWebdatenbank() {
         List<Spieltermin> spieltermine = new ArrayList<>();
 
