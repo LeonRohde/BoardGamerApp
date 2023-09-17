@@ -62,6 +62,9 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.d(TAG, "Prüfung erfolgreich");
                     addPlayer();
                     if (pruefung.equals("OK")) {
+                        addFeeback();
+                    }
+                    if (pruefung.equals("OK")) {
                         addFirebase();
                     }
                 }else{
@@ -70,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
     private void pruefenEingabe() {
         eMailEdit = (EditText) findViewById(R.id.editTextRegEmail);
         passwortEdit = (EditText) findViewById(R.id.editTextRegPW);
@@ -159,25 +163,63 @@ public class RegisterActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG, "Fehler beim Insert" + e.getMessage());
+                Log.d(TAG, "Fehler beim Insert: Player: " + e.getMessage());
                 pruefung = "NOK";
                 Toast.makeText(RegisterActivity.this, "Spieler hinzufügen fehlgeschlagen", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-               try {
-                   myResp = response.body().string();
-                   Log.d(TAG, "response Inhalt: " + myResp);
-                   if (response.isSuccessful()){
-                     pruefung = "OK";
-                   }else {
-                       Log.d(TAG, "Fehler" + response);
-                       pruefung = "NOK";
-                   }
-               }catch (IOException e) {
-                   Log.d(TAG, "Exception: " + e.getMessage());
-               }
+                try {
+                    myResp = response.body().string();
+
+                    if (response.isSuccessful()){
+                        pruefung = "OK";
+                    }else {
+                        Log.d(TAG, "Fehler" + response);
+                        pruefung = "NOK";
+                    }
+                }catch (IOException e) {
+                    Log.d(TAG, "Exception: " + e.getMessage());
+                }
+
+            }
+        });
+    }
+
+    private void addFeeback() {
+        email = eMailEdit.getText().toString();
+
+        OkHttpClient client = new OkHttpClient();
+        String postPlayerUrl = "https://qu-iu-zz.beyer-its.de/ins_feedback.php";
+
+        RequestBody reqBody = new FormBody.Builder()
+                .add("email", email)
+                .build();
+
+        Request request = new Request.Builder().url(postPlayerUrl).post(reqBody).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG, "Fehler beim Insert: Feetback: " + e.getMessage());
+                pruefung = "NOK";
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                try {
+                    myResp = response.body().string();
+
+                    if (response.isSuccessful()){
+                        pruefung = "OK";
+                    }else {
+                        Log.d(TAG, "Fehler" + response);
+                        pruefung = "NOK";
+                    }
+                }catch (IOException e) {
+                    Log.d(TAG, "Exception: " + e.getMessage());
+                }
 
             }
         });
