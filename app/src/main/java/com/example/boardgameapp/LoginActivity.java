@@ -27,6 +27,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         client = new OkHttpClient();
 
         TextView register = findViewById(R.id.textRegister);
+        subscribeTopics();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Toast.makeText(LoginActivity.this, "Erfolgreich angemeldet",
                                             Toast.LENGTH_SHORT).show();
+
                                     Intent MainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(MainIntent);
                                     finish();
@@ -98,5 +101,19 @@ public class LoginActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+    private void subscribeTopics() {
+        // [START subscribe_topics]
+        FirebaseMessaging.getInstance().subscribeToTopic("BoardGamer")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed";
+                        if (!task.isSuccessful()) {
+                            msg = "Subscribe failed";
+                        }
+                        Log.d(TAG, msg);
+                    }
+                });
     }
 }
