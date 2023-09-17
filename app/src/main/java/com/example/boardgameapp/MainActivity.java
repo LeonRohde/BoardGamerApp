@@ -1,9 +1,9 @@
 package com.example.boardgameapp;
 
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,10 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,14 +20,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
@@ -122,120 +124,79 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Hier rufen wir die Methode auf, um die RecyclerView zu aktualisieren
-        updateRecyclerView();
-    }
-    private void subscribeTopics() {
-        // [START subscribe_topics]
-        FirebaseMessaging.getInstance().subscribeToTopic("BoardGamer")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
-                        if (!task.isSuccessful()) {
-                            msg = "Subscribe failed";
-                        }
-                        Log.d(TAG, msg);
-                    }
-                });
-    }
-    private List<Spieltermin> getDatenAusWebdatenbank() {
-        List<Spieltermin> spieltermine = new ArrayList<>();
-
-        try {
-            String serverURL = "https://qu-iu-zz.beyer-its.de/getGameData.php";
-            URL url = new URL(serverURL);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.connect();
-
-            int responseCode = httpURLConnection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-
-                bufferedReader.close();
-
-                String responseData = stringBuilder.toString();
-
-                // Hier kannst du den JSON-String parsen und die Spieltermine erstellen
-                // (ersetze es durch deinen eigenen Code)
-
-            } else {
-                // Fehlerbehandlung, wenn die Anfrage nicht erfolgreich war
-            }
-
-            httpURLConnection.disconnect();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return spieltermine;
-    }
-    private void getDataFromFTP() {
-        String server = "ftp.beyer-its.de";
-        int port = 21;
-        String username = "qu-iu-zz@beyer-its.de";
-        String password = "=5Ap-PVCKz=yy#S7";
-        String remoteFilePath = "getGameData.php";
-
-        FTPClient ftpClient = new FTPClient();
-
-        try {
-            ftpClient.connect(server, port);
-            int replyCode = ftpClient.getReplyCode();
-
-            if (FTPReply.isPositiveCompletion(replyCode)) {
-                boolean loginSuccess = ftpClient.login(username, password);
-
-                if (loginSuccess) {
-                    ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                    String localFilePath = getFilesDir() + "/getGameData.php";
-                    boolean downloadSuccess = ftpClient.retrieveFile(remoteFilePath, new FileOutputStream(localFilePath));
-
-                    if (downloadSuccess) {
-                        // Die Datei wurde erfolgreich heruntergeladen
-                        // Hier kannst du den PHP-Code ausführen, um die Daten abzurufen
-                    } else {
-                        // Fehlerbehandlung, wenn die Datei nicht erfolgreich heruntergeladen wurde
-                    }
-
-                    ftpClient.logout();
-                    ftpClient.disconnect();
-                } else {
-                    // Fehlerbehandlung, wenn die Anmeldung nicht erfolgreich war
-                }
-            } else {
-                // Fehlerbehandlung, wenn keine Verbindung zum Server hergestellt werden konnte
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Hier rufen wir die Methode auf, um die Daten aus der Webdatenbank abzurufen
+        getDataFromServer();
     }
 
-    private void updateRecyclerView() {
-        // Hier starten wir einen Hintergrundthread, um die Daten aus der Webdatenbank abzurufen
-        new Thread(new Runnable() {
+    private void getDataFromServer() {
+        OkHttpClient client = new OkHttpClient();
+        String serverURL = "https://qu-iu-zz.beyer-its.de/ins_player.php";
+
+        Request request = new Request.Builder()
+                .url(serverURL)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-                final List<Spieltermin> spieltermine = getDatenAusWebdatenbank();
-
-                // Die RecyclerView muss auf dem Hauptthread aktualisiert werden
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // Fehlerbehandlung für den Fall, dass die Anfrage fehlschlägt
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Aktualisiere den RecyclerView-Adapter mit den erhaltenen Daten
-                        adapter.updateData(spieltermine);
+                        Toast.makeText(MainActivity.this, "Fehler beim Herunterladen der Daten", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
-        }).start();
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseData = response.body().string();
+                        final List<Spieltermin> spieltermine = parseJSON(responseData);
+
+                        // Aktualisieren Sie die RecyclerView auf dem UI-Thread
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.updateData(spieltermine);
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        // Fehlerbehandlung für ungültiges JSON
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "Fehler beim Verarbeiten der Daten", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } else {
+                    // Fehlerbehandlung, wenn die Anfrage nicht erfolgreich war
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Fehler beim Herunterladen der Daten", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private List<Spieltermin> parseJSON(String jsonData) throws JSONException {
+        List<Spieltermin> spieltermine = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray(jsonData);
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            int id = jsonObject.getInt("ID");
+            String email = jsonObject.getString("Email");
+            Spieltermin spieltermin = new Spieltermin(id, email);
+            spieltermine.add(spieltermin);
+        }
+
+        return spieltermine;
     }
 }

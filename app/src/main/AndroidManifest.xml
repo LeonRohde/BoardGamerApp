@@ -32,11 +32,7 @@
         <activity
             android:name=".GameVotingActivity"
             android:exported="true" />
-        <activity
-            android:name=".HostActivityRotation"
-            android:exported="false" />
-        <activity
-            android:name=".GameSuggestionsActivity"
+        <activity    android:name=".GameSuggestionsActivity"
             android:exported="true" />
         <activity
             android:name=".FeedbackActivity"
