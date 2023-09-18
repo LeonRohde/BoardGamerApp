@@ -1,31 +1,37 @@
 package com.example.boardgameapp;
 
 public class Spieltermin {
-    private String name;
+    private String vorname;
+    private String ort;
+    private String spieldt;
 
-    public Spieltermin(int id, String name) {
-        this.name = name;
+    public Spieltermin(String vorname, String ort, String spieldt) {
+        this.vorname = vorname;
+        this.ort = ort;
+        this.spieldt = spieldt;
     }
 
-    public String getName() {
-        return name;
+    public String getVorname() {
+        return vorname;
     }
 
-    private String date;
-    private String location;
-
-    public Spieltermin(String date, String location) {
-        this.date = date;
-        this.location = location;
+    public void setVorname(String vorname) {
+        this.vorname = vorname;
     }
 
-    public String getDate() {
-        return date;
+    public String getOrt() {
+        return ort;
     }
 
-    public String getLocation() {
-        return location;
+    public void setOrt(String ort) {
+        this.ort = ort;
+    }
+
+    public String getSpieldt() {
+        return spieldt;
+    }
+
+    public void setSpieldt(String spieldt) {
+        this.spieldt = spieldt;
     }
 }
-
-

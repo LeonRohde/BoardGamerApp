@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDataFromServer() {
         OkHttpClient client = new OkHttpClient();
-        String serverURL = "https://qu-iu-zz.beyer-its.de/ins_player.php";
+        String serverURL = "https://qu-iu-zz.beyer-its.de/getGameData.php";
 
         Request request = new Request.Builder()
                 .url(serverURL)
@@ -191,12 +191,14 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            int id = jsonObject.getInt("ID");
-            String email = jsonObject.getString("Email");
-            Spieltermin spieltermin = new Spieltermin(id, email);
+            String vorname = jsonObject.getString("Vorname");
+            String ort = jsonObject.getString("Ort");
+            String spieldt = jsonObject.getString("spieldt");
+            Spieltermin spieltermin = new Spieltermin(vorname, ort, spieldt); // Passen Sie den Konstruktor von Spieltermin an
             spieltermine.add(spieltermin);
         }
 
         return spieltermine;
     }
+
 }

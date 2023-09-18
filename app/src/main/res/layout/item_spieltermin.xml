@@ -6,14 +6,20 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/dateTextView"
+        android:id="@+id/vornameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Datum: " />
+        android:text="Vorname: " />
 
     <TextView
-        android:id="@+id/locationTextView"
+        android:id="@+id/ortTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ort: " />
+
+    <TextView
+        android:id="@+id/spieldtTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spieltermin: " />
 </LinearLayout>
