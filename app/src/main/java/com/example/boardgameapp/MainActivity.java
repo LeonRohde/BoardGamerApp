@@ -18,7 +18,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button userDataActivityButton = findViewById(R.id.userActivityButton);
+        userDataActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PlayerData.class);
+                startActivity(intent);
+            }
+        });
+
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDataFromServer() {
         OkHttpClient client = new OkHttpClient();
-        String serverURL = "https://qu-iu-zz.beyer-its.de/getGameData.php";
+        String serverURL = "https://qu-iu-zz.beyer-its.de/select_player.php";
 
         Request request = new Request.Builder()
                 .url(serverURL)
@@ -191,8 +199,8 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String vorname = jsonObject.getString("Vorname");
-            String ort = jsonObject.getString("Ort");
+            String vorname = jsonObject.getString("vorname");
+            String ort = jsonObject.getString("ort");
             String spieldt = jsonObject.getString("spieldt");
             Spieltermin spieltermin = new Spieltermin(vorname, ort, spieldt); // Passen Sie den Konstruktor von Spieltermin an
             spieltermine.add(spieltermin);
