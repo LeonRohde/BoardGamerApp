@@ -46,7 +46,15 @@ public class SuggestedGamesAdapter extends RecyclerView.Adapter<SuggestedGamesAd
         final String game = suggestedGames.get(holder.getAdapterPosition());
         holder.gameTextView.setText(game);
 
-
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPosition = holder.getBindingAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION && onDeleteClickListener != null) {
+                    onDeleteClickListener.onDeleteClick(adapterPosition);
+                }
+            }
+        });
     }
 
 
@@ -58,10 +66,16 @@ public class SuggestedGamesAdapter extends RecyclerView.Adapter<SuggestedGamesAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView gameTextView;
-
+        public View deleteButton;
         public ViewHolder(View itemView) {
             super(itemView);
             gameTextView = itemView.findViewById(R.id.gameTextView);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener onDeleteClickListener) {
+        this.onDeleteClickListener = onDeleteClickListener;
+    }
+
 }

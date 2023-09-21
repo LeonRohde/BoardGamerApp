@@ -3,7 +3,6 @@ package com.example.boardgameapp;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,14 +36,12 @@ public class GameSuggestionsActivity extends AppCompatActivity {
     private ArrayList<String> suggestedGames;
     private List<String> gameList = new ArrayList<>();
     private OkHttpClient client;
-    SuggestedGamesAdapter SuggestedGamesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_suggestions);
 
-        SuggestedGamesAdapter = new SuggestedGamesAdapter(new ArrayList<String>());
         client = new OkHttpClient();
 
         gameInput = findViewById(R.id.gameInput);
@@ -52,10 +49,18 @@ public class GameSuggestionsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.suggestedGamesRecyclerView);
 
         suggestedGames = new ArrayList<>();
-        adapter = new SuggestedGamesAdapter((ArrayList<String>) suggestedGames);
+        adapter = new SuggestedGamesAdapter(suggestedGames);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        adapter.setOnDeleteClickListener(new SuggestedGamesAdapter.OnDeleteClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                removeSuggestedGame(position);
+                showToast("Spiel gelöscht.");
+            }
+        });
 
         loadGamesFromServer();
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -66,13 +71,11 @@ public class GameSuggestionsActivity extends AppCompatActivity {
                     sendSuggestedGameToServer(game);
                     gameInput.setText("");
                 } else {
-
                     showToast("Bitte geben Sie ein Spiel ein.");
                 }
             }
         });
     }
-
 
     private void sendSuggestedGameToServer(String game) {
         String serverURL = "https://qu-iu-zz.beyer-its.de/ins_game.php";
@@ -110,14 +113,13 @@ public class GameSuggestionsActivity extends AppCompatActivity {
     }
 
     private void loadGamesFromServer() {
-        OkHttpClient client = new OkHttpClient();
         String serverURL = "https://qu-iu-zz.beyer-its.de/select_game.php"; // Deine Server-URL hier
 
         Request request = new Request.Builder()
                 .url(serverURL)
                 .build();
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
@@ -145,9 +147,9 @@ public class GameSuggestionsActivity extends AppCompatActivity {
                             suggestedGames.clear();
                             suggestedGames.addAll(gameList);
                             adapter.notifyDataSetChanged();
+                            showToast("Spielliste geladen");
+                            Log.d("Debug", "Anzahl der Spiele in suggestedGames: " + suggestedGames.size());
                         });
-                    showToast("Spielliste geladen");
-                    Log.d("Debug", "Anzahl der Spiele in suggestedGames: " + suggestedGames.size());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -168,39 +170,41 @@ public class GameSuggestionsActivity extends AppCompatActivity {
     }
 
     private void removeSuggestedGame(int position) {
-        String gameToRemove = suggestedGames.get(position);
-        String serverURL = "https://qu-iu-zz.beyer-its.de/delete_game.php"; // Ersetze dies durch deine Server-URL
+        if (position >= 0 && position < suggestedGames.size()) {
+            String gameToRemove = suggestedGames.get(position);
+            String serverURL = "https://qu-iu-zz.beyer-its.de/delete_game.php";
 
-        RequestBody requestBody = new FormBody.Builder()
-                .add("game", gameToRemove)
-                .build();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("game", gameToRemove)
+                    .build();
 
-        Request request = new Request.Builder()
-                .url(serverURL)
-                .post(requestBody)
-                .build();
+            Request request = new Request.Builder()
+                    .url(serverURL)
+                    .post(requestBody)
+                    .build();
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                showToast("Fehler beim Löschen des Spiels vom Server");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    runOnUiThread(() -> {
-                        suggestedGames.remove(position);
-                        adapter.notifyItemRemoved(position);
-                        showToast("Spiel erfolgreich vom Server gelöscht");
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        showToast("Fehler beim Löschen des Spiels vom Server");
-                    });
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    showToast("Fehler beim Löschen des Spiels vom Server");
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        runOnUiThread(() -> {
+                            suggestedGames.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            showToast("Spiel erfolgreich vom Server gelöscht");
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            showToast("Fehler beim Löschen des Spiels vom Server");
+                        });
+                    }
+                }
+            });
+        }
     }
 }
