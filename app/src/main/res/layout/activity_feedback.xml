@@ -7,17 +7,25 @@
     android:padding="16dp"
     tools:context=".FeedbackActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feedbackRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="278dp"
+        android:layout_below="@id/spielerSpinner"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="vertical" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wähle den Gastgeber!"
+        android:text="Bewerte den Gastgeber!"
         android:textStyle="bold"/>
 
     <Spinner
         android:id="@+id/spielerSpinner"
         android:layout_width="389dp"
         android:layout_height="55dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="Bewertung für:" />
 
     <TextView
@@ -32,7 +40,7 @@
         android:numStars="5"
         android:rating="0"
         android:stepSize="1"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="Gastgeber"/>
     <TextView
         android:layout_width="wrap_content"
@@ -45,7 +53,7 @@
         android:numStars="5"
         android:rating="0"
         android:stepSize="1"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="Essen"/>
     <TextView
         android:layout_width="wrap_content"
@@ -58,25 +66,26 @@
         android:numStars="5"
         android:rating="0"
         android:stepSize="1"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Spielabend"/>
 
+
+    <TextView
+        android:id="@+id/averageRatingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Durchschnittliche Bewertung"
+        android:textSize="18sp"
+        android:textStyle="bold" />
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Absenden"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp" />
+        android:layout_marginBottom="8dp" />
 
-    <TextView
-        android:id="@+id/averageRatingTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Durchschnittliche Bewertung"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
 
 </LinearLayout>
