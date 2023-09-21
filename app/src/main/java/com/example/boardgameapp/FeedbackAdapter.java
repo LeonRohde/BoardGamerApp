@@ -35,10 +35,10 @@ public class FeedbackAdapter extends RecyclerView.Adapter<FeedbackAdapter.Feedba
         FeedbackItem feedbackItem = feedbackList.get(position);
 
         // Setzt die Daten für jedes Element in der RecyclerView
-        holder.spielerTextView.setText("Spieler: " + feedbackItem.getSpieler());
-        holder.gastgeberBewertungTextView.setText("Gastgeber-Bewertung: " + feedbackItem.getGastgeber());
-        holder.essenBewertungTextView.setText("Essen-Bewertung: " + feedbackItem.getEssen());
-        holder.abendBewertungTextView.setText("Abend-Bewertung: " + feedbackItem.getAbend());
+        holder.spielerTextView.setText(feedbackItem.getSpieler());
+        holder.gastgeberBewertungTextView.setText("Gastgeber:" + feedbackItem.getGastgeber());
+        holder.essenBewertungTextView.setText("Essen: " + feedbackItem.getEssen());
+        holder.abendBewertungTextView.setText("Abend: " + feedbackItem.getAbend());
     }
 
     @Override

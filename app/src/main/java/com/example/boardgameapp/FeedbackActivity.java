@@ -91,7 +91,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
                     try {
                         JSONArray jsonArray = new JSONArray(responseData);
-                        spielerList.clear(); // Löschen Sie die vorherigen Spieler, falls vorhanden
+                        spielerList.clear();
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);

@@ -6,20 +6,26 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".FeedbackActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alle Bewertungen"
+        android:textStyle="bold"
+        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feedbackRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="278dp"
+        android:layout_height="224dp"
         android:layout_below="@id/spielerSpinner"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:scrollbars="vertical" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bewerte den Gastgeber!"
-        android:textStyle="bold"/>
+        android:text="Wähle dein Konto und bewerte den letzten Gastgeber!"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spielerSpinner"
@@ -76,7 +82,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="Durchschnittliche Bewertung"
-        android:textSize="18sp"
         android:textStyle="bold" />
     <Button
         android:id="@+id/submitButton"
