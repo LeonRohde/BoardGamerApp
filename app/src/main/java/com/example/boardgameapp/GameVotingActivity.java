@@ -1,6 +1,7 @@
 package com.example.boardgameapp;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -56,10 +57,9 @@ public class GameVotingActivity extends AppCompatActivity {
         adapter.setOnVoteClickListener(new GameVotingAdapter.OnVoteClickListener() {
             @Override
             public void onVoteClick(int position) {
-
                 GameItem selectedGame = gameVoting.get(position);
                 showToast("Spiel ausgewählt: " + selectedGame.getGameName());
-                incrementVotesInDatabase(selectedGame);
+                incrementVotesInRecyclerView(selectedGame);
             }
         });
 
@@ -72,62 +72,32 @@ public class GameVotingActivity extends AppCompatActivity {
                         gameItem.setVotes(gameItem.getVotes() + 1);
                     }
                     adapter.notifyDataSetChanged();
-                    sendVotesToServer(selectedGames);
+                    sendVotesToServer();
+
+                    // Verzögern Sie das Laden der Spiele um 1 Sekunde
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadGamesFromServer();
+                        }
+                    }, 1000); // 1000 Millisekunden (1 Sekunde)
                 } else {
                     showToast("Bitte wählen Sie Spiele aus.");
                 }
             }
         });
 
+
         loadGamesFromServer();
     }
 
-
-    private void incrementVotesInDatabase(GameItem selectedGame) {
-        String serverURL = "https://qu-iu-zz.beyer-its.de/update_votes.php"; // Ändern Sie die URL entsprechend Ihrer API
-
-        String gameName = selectedGame.getGameName(); // Game-Name als Schlüssel verwenden
+    private void incrementVotesInRecyclerView(GameItem selectedGame) {
         int currentVotes = selectedGame.getVotes(); // Aktuelle Anzahl der Votes
 
         // Erhöhen Sie die Votes lokal
         selectedGame.setVotes(currentVotes + 1);
         adapter.notifyDataSetChanged(); // Aktualisieren Sie die RecyclerView-Ansicht
-
-        // Senden Sie die aktualisierten Daten an den Server
-        OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("Game", gameName) // Verwenden Sie den richtigen Schlüssel, falls erforderlich
-                .add("Votes", String.valueOf(currentVotes + 1)) // Erhöhen Sie die Anzahl der Votes
-                .build();
-
-        Request request = new Request.Builder()
-                .url(serverURL)
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                showToast("Fehler beim Aktualisieren der Votes auf dem Server");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    runOnUiThread(() -> {
-                        showToast("Votes erfolgreich aktualisiert auf dem Server");
-                        // Hier können Sie weitere Aktionen durchführen, z.B. die Ansicht aktualisieren
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        showToast("Fehler beim Aktualisieren der Votes auf dem Server");
-                    });
-                }
-            }
-        });
     }
-
 
 
 
@@ -170,7 +140,6 @@ public class GameVotingActivity extends AppCompatActivity {
                             gameVoting.clear();
                             gameVoting.addAll(gameList);
                             adapter.notifyDataSetChanged();
-                            showToast("Spielliste geladen");
                             Log.d("Debug", "Anzahl der Spiele in GameVoting: " + gameVoting.size());
                         });
 
@@ -191,25 +160,25 @@ public class GameVotingActivity extends AppCompatActivity {
         runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
 
-    private void sendVotesToServer(List<GameItem> gameItems) {
+    private void sendVotesToServer() {
         OkHttpClient client = new OkHttpClient();
         String serverURL = "https://qu-iu-zz.beyer-its.de/update_votes.php";
 
+        // Erstellen Sie ein JSON-Array, um die gesamte Tabelle darzustellen
         JSONArray jsonArray = new JSONArray();
 
-        // Konvertieren Sie die Liste von GameItem-Objekten in ein JSON-Array
-        for (GameItem gameItem : gameItems) {
-            JSONObject jsonObject = new JSONObject();
+        for (GameItem gameItem : gameVoting) {
             try {
-                jsonObject.put("Game", gameItem.getGameName());
-                jsonObject.put("Votes", gameItem.getVotes());
-                jsonArray.put(jsonObject);
+                JSONObject gameObject = new JSONObject();
+                gameObject.put("Game", gameItem.getGameName());
+                gameObject.put("Votes", gameItem.getVotes());
+                jsonArray.put(gameObject);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        // Erstellen Sie eine Anfrage mit dem JSON-Array als RequestBody
+        // Erstellen Sie den Anfrage-Body mit dem JSON-Array
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), jsonArray.toString());
 
         Request request = new Request.Builder()
@@ -217,11 +186,12 @@ public class GameVotingActivity extends AppCompatActivity {
                 .post(requestBody)
                 .build();
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     Toast.makeText(GameVotingActivity.this, "Fehler beim Senden der Votes", Toast.LENGTH_SHORT).show();
+                    Log.e("ServerResponse", "Fehler beim Senden der Votes", e);
                 });
             }
 
@@ -230,15 +200,16 @@ public class GameVotingActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> {
                         Toast.makeText(GameVotingActivity.this, "Votes erfolgreich gespeichert", Toast.LENGTH_SHORT).show();
+                        Log.d("ServerResponse", "Votes erfolgreich gespeichert");
                     });
                 } else {
                     runOnUiThread(() -> {
                         Toast.makeText(GameVotingActivity.this, "Fehler beim Speichern der Votes", Toast.LENGTH_SHORT).show();
+                        Log.e("ServerResponse", "Fehler beim Speichern der Votes. Response Code: " + response.code());
                     });
                 }
             }
         });
     }
-
 
 }
