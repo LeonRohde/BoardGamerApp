@@ -3,6 +3,7 @@ package com.example.boardgameapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,21 +31,47 @@ import okhttp3.Response;
 public class PlayerData extends AppCompatActivity {
         private static String TAG = "PlayerData";
         private Button btnUpdAbbr, btnUpdSichern;
-        private EditText updStrasse, updHausnr, updPLZ, updOrt, updTermin;
-        private String userMail, myResp;
+        private EditText updVorname, updName, updStrasse, updHausnr, updPLZ, updOrt, updTermin;
+        private String userMail, hostMail, reqMail;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_player_data);
 
+                updVorname = findViewById(R.id.updVorname);
+                updName = findViewById(R.id.updName);
                 updStrasse = findViewById(R.id.updStrasse);
                 updHausnr = findViewById(R.id.updHausnr);
                 updPLZ = findViewById(R.id.updPLZ);
                 updOrt = findViewById(R.id.updOrt);
                 updTermin = findViewById(R.id.updTermin);
 
-                getPlayerData();
+                //Aus MainActivity übergebene Mail ermitteln
+                Intent intent = getIntent();
+                Bundle inhalt = intent.getExtras();
+                hostMail = inhalt.getString("email");
+
+                //Angemeldete Mail ermitteln
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                userMail = user.getEmail();
+
+                //Email für Tabellenzugriffe belegen
+                reqMail = userMail;
+
+                //Wenn die Mails nicht identisch sind, darf nur der Spieltermin verändert werden
+                if (!hostMail.equals(userMail)){
+                        reqMail = hostMail;
+                        updVorname.setEnabled(false);
+                        updName.setEnabled(false);
+                        updStrasse.setEnabled(false);
+                        updHausnr.setEnabled(false);
+                        updHausnr.setEnabled(false);
+                        updPLZ.setEnabled(false);
+                        updOrt.setEnabled(false);
+                }
+
+                getPlayerData(hostMail);
 
                 btnUpdAbbr = findViewById(R.id.btnUpdAbbr);
                 btnUpdAbbr.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +85,9 @@ public class PlayerData extends AppCompatActivity {
                 btnUpdSichern.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
                                 updSpieler();
-                                PlayerData.super.onBackPressed();
+                                finish();
+                                Intent back = new Intent(PlayerData.this, MainActivity.class);
+                                startActivity(back);
                         }
                 });
         }
@@ -81,7 +110,7 @@ public class PlayerData extends AppCompatActivity {
                         .add("plz", plz)
                         .add("ort", ort)
                         .add("spieldt", spieldt)
-                        .add("email", userMail)
+                        .add("email", reqMail)
                         .build();
                 Log.d(TAG, "Request: " + reqBody);
 
@@ -99,7 +128,7 @@ public class PlayerData extends AppCompatActivity {
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                                 try {
-                                        myResp = response.body().string();
+                                        String myResp = response.body().string();
 
                                         if (response.isSuccessful()){
                                                 Log.d(TAG, "Spieler erfolgreich aktualisiert");
@@ -122,20 +151,19 @@ public class PlayerData extends AppCompatActivity {
                                                         }
                                                 });
                                         }
+
                                 }catch (IOException e) {
                                         Log.d(TAG, "Exception: " + e.getMessage());
                                 }
-
+                                response.close();
                         }
                 });
+                client.connectionPool().evictAll();
         }
 
-        private void getPlayerData() {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                userMail = user.getEmail();
-
+        private void getPlayerData(String hostMail) {
                 OkHttpClient client = new OkHttpClient();
-                String serverURL = "https://qu-iu-zz.beyer-its.de/select_player.php?email=" + userMail;
+                String serverURL = "https://qu-iu-zz.beyer-its.de/select_player.php?email=" + reqMail;
 
                 Request request = new Request.Builder()
                 .url(serverURL)
@@ -164,6 +192,8 @@ public class PlayerData extends AppCompatActivity {
                                                 JSONArray playerArray = new JSONArray(responseData);
                                                 JSONObject playerdaten = playerArray.getJSONObject(0);
 
+                                                String jsonVorname = playerdaten.getString("vorname");
+                                                String jsonName = playerdaten.getString("name");
                                                 String jsonStrasse = playerdaten.getString("strasse");
                                                 String jsonHausnr = playerdaten.getString("hausnr");
                                                 String jsonPLZ = playerdaten.getString("plz");
@@ -173,6 +203,8 @@ public class PlayerData extends AppCompatActivity {
                                                 runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
+                                                                updVorname.setText(jsonVorname);
+                                                                updName.setText(jsonName);
                                                                 updStrasse.setText(jsonStrasse);
                                                                 updHausnr.setText(jsonHausnr);
                                                                 updPLZ.setText(jsonPLZ);
@@ -206,7 +238,9 @@ public class PlayerData extends AppCompatActivity {
                                                 }
                                         });
                                 }
+                                response.close();
                         }
                 });
+                client.connectionPool().evictAll();
         }
 }

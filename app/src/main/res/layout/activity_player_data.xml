@@ -10,7 +10,7 @@
         android:id="@+id/textViewPD1"
         android:layout_width="228dp"
         android:layout_height="32dp"
-        android:text="Eigene Daten anpassen"
+        android:text="Spielerdaten pflegen"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,25 +18,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textViewPD2"
+        android:id="@+id/textViewPD3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updVorname" />
+
+    <TextView
+        android:id="@+id/textViewPD4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:text="Strasse"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPD1" />
+        app:layout_constraintTop_toBottomOf="@+id/updName" />
 
     <EditText
         android:id="@+id/updStrasse"
         android:layout_width="280dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/textViewPD3"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPD1"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
+        app:layout_constraintTop_toBottomOf="@+id/updName"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <EditText
@@ -47,7 +57,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/textViewPD3"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
         app:layout_constraintTop_toBottomOf="@id/updStrasse"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -59,7 +69,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/textViewPD3"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
         app:layout_constraintTop_toBottomOf="@id/updHausnr"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -71,12 +81,12 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/textViewPD3"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
         app:layout_constraintTop_toBottomOf="@id/updPLZ"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
-        android:id="@+id/textViewPD3"
+        android:id="@+id/textViewPD5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -86,7 +96,7 @@
         app:layout_constraintTop_toBottomOf="@+id/updStrasse" />
 
     <TextView
-        android:id="@+id/textViewPD4"
+        android:id="@+id/textViewPD6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -96,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@id/updPLZ" />
 
     <TextView
-        android:id="@+id/textViewPD5"
+        android:id="@+id/textViewPD7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -106,7 +116,7 @@
         app:layout_constraintTop_toBottomOf="@id/updHausnr" />
 
     <TextView
-        android:id="@+id/textViewPD6"
+        android:id="@+id/textViewPD8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -123,7 +133,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/textViewPD3"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
         app:layout_constraintTop_toBottomOf="@+id/updOrt"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -148,5 +158,39 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/btnUpdAbbr"
         app:layout_constraintTop_toBottomOf="@id/updTermin" />
+
+    <TextView
+        android:id="@+id/textViewPD2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="Vorname"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPD1" />
+
+    <EditText
+        android:id="@+id/updVorname"
+        android:layout_width="280dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintStart_toEndOf="@id/textViewPD5"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPD1"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/updName"
+        android:layout_width="280dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintStart_toEndOf="@+id/textViewPD5"
+        app:layout_constraintTop_toBottomOf="@+id/updVorname"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

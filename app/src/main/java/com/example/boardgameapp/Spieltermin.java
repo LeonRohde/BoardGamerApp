@@ -4,11 +4,13 @@ public class Spieltermin {
     private String vorname;
     private String ort;
     private String spieldt;
+    private String email;
 
-    public Spieltermin(String vorname, String ort, String spieldt) {
+    public Spieltermin(String vorname, String ort, String spieldt, String email) {
         this.vorname = vorname;
         this.ort = ort;
         this.spieldt = spieldt;
+        this.email = email;
     }
 
     public String getVorname() {
@@ -33,5 +35,12 @@ public class Spieltermin {
 
     public void setSpieldt(String spieldt) {
         this.spieldt = spieldt;
+    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
